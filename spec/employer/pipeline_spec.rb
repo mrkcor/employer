@@ -2,22 +2,15 @@ require "employer/pipeline"
 
 describe Employer::Pipeline do
   let(:pipeline) { Employer::Pipeline.new }
-  let(:backend) { double("Pipeline backend", enqueue: nil, dequeue: nil, complete: nil, reset: nil, fail: nil) }
+  let(:backend) { double("Pipeline backend") }
+  let(:job) { double("Job") }
 
-  describe "configurable backend" do
-    it "accepts a compatible backend" do
-      pipeline.backend = backend
-      pipeline.backend.should eq(backend)
-    end
-
-    it "rejects an incompatible backend" do
-      expect { pipeline.backend = double }.to raise_error(Employer::Pipeline::InvalidBackend)
-    end
+  it "has a pluggable backend" do
+    pipeline.backend = backend
+    pipeline.backend.should eq(backend)
   end
 
   describe "#enqueue" do
-    let(:job) { double("Job") }
-
     it "serializes and then enqueues jobs using its backend" do
       job_id = 1
       serialized_job = {}
@@ -38,12 +31,11 @@ describe Employer::Pipeline do
     it "dequeues job using its backend and properly instantiates it" do
       stub_const("TestJob", Class.new)
       job_id = 1
-      job = double("Job", id: job_id)
+      job.stub(:id).and_return(job_id)
       serialized_job = {id: job_id, class: "TestJob"}
 
       backend.should_receive(:dequeue).and_return(serialized_job)
       TestJob.should_receive(:deserialize).and_return(job)
-      job.should_receive(:pipeline=).with(pipeline)
 
       pipeline.backend = backend
       dequeued_job = pipeline.dequeue
@@ -64,7 +56,6 @@ describe Employer::Pipeline do
 
   describe "#complete" do
     it "completes job using its backend" do
-      job = double("Job")
       backend.should_receive(:complete).with(job)
       pipeline.backend = backend
       pipeline.complete(job)
@@ -77,7 +68,6 @@ describe Employer::Pipeline do
 
   describe "#reset" do
     it "resets the job using its backend" do
-      job = double("Job")
       backend.should_receive(:reset).with(job)
       pipeline.backend = backend
       pipeline.reset(job)
@@ -90,7 +80,6 @@ describe Employer::Pipeline do
 
   describe "#fail" do
     it "fails the job using its backend" do
-      job = double("Job")
       backend.should_receive(:fail).with(job)
       pipeline.backend = backend
       pipeline.fail(job)

@@ -1,10 +1,8 @@
-require_relative "pipeline/invalid_backend"
 require_relative "pipeline/backend_required"
 
 module Employer
   class Pipeline
     def backend=(backend)
-      raise InvalidBackend if [:enqueue, :dequeue, :complete, :reset, :fail].find { |message| !backend.respond_to?(message) }
       @backend = backend
     end
 
@@ -22,9 +20,7 @@ module Employer
       raise BackendRequired if backend.nil?
       if serialized_job = backend.dequeue
         job_class = constantize(serialized_job[:class])
-        dequeued_job = job_class.deserialize(serialized_job)
-        dequeued_job.pipeline = self
-        dequeued_job
+        job_class.deserialize(serialized_job)
       end
     end
 

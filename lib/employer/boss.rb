@@ -1,37 +1,68 @@
-require_relative "boss/invalid_pipeline"
-require_relative "boss/invalid_employee"
 require_relative "boss/no_employee_free"
 
 module Employer
   class Boss
-    attr_reader :pipelines, :employees
+    attr_reader :pipeline, :employees
 
     def initialize
-      @pipelines = []
+      @pipeline = nil
       @employees = []
     end
 
-    def allocate_pipeline(pipeline)
-      raise InvalidPipeline unless pipeline.respond_to?(:dequeue)
-      pipelines << pipeline
+    def pipeline=(pipeline)
+      @pipeline = pipeline
     end
 
     def allocate_employee(employee)
-      raise InvalidEmployee if [:work, :free?, :join].find { |message| !employee.respond_to?(message) }
       employees << employee
     end
 
     def manage
-      while employee_free? && job = find_work
-        delegate(job)
+      loop do
+        delegate_work
+        progress_update
+        sleep 0.1
       end
     end
 
-    def wait_on_employees
-      busy_employees.each(&:join)
+    def delegate_work
+      while free_employee? && job = pipeline.dequeue
+        delegate_job(job)
+      end
     end
 
-    def delegate(job)
+    def progress_update
+      busy_employees.each do |employee|
+        update_job_status(employee)
+      end
+    end
+
+    def update_job_status(employee)
+      return if employee.work_in_progress?
+
+      job = employee.job
+
+      if employee.work_completed?
+        pipeline.complete(job)
+      elsif employee.work_failed?
+        if job.try_again?
+          pipeline.reset(job)
+        else
+          pipeline.fail(job)
+        end
+      end
+
+      employee.free
+    end
+
+    def wait_on_employees
+      busy_employees.each do |employee|
+        employee.wait_for_completion
+        update_job_status(employee)
+      end
+    end
+
+    def delegate_job(job)
       raise NoEmployeeFree unless employee = free_employee
       employee.work(job)
     end
@@ -44,14 +75,8 @@ module Employer
       employees.find(&:free?)
     end
 
-    def employee_free?
+    def free_employee?
       free_employee
-    end
-
-    def find_work
-      job = nil
-      pipelines.find { |pipeline| job = pipeline.dequeue }
-      job
     end
   end
 end
