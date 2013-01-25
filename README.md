@@ -1,6 +1,9 @@
 # Employer
 
-TODO: Write a gem description
+There comes a time in the life of an application that async job processing
+becomes a requirement. If you want something flexible that you can easily adapt
+to fit in with your application's infrastucture, then Employer may be what you
+are looking for.
 
 ## Installation
 
