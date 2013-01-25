@@ -9,10 +9,13 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Mark Kremer"]
   gem.email         = ["mark@without-brains.net"]
   gem.summary       = %q{Job processing made easy}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/mkremer/employer"
+  gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
+
+  gem.add_development_dependency "rspec"
 end
