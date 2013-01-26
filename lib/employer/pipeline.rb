@@ -26,6 +26,16 @@ module Employer
       end
     end
 
+    def complete(job)
+      raise BackendRequired if backend.nil?
+      backend.complete(job)
+    end
+
+    def reset(job)
+      raise BackendRequired if backend.nil?
+      backend.reset(job)
+    end
+
     private
 
     def constantize(camel_cased_word)

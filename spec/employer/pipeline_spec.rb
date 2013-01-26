@@ -62,4 +62,30 @@ describe Employer::Pipeline do
       expect { pipeline.dequeue }.to raise_error(Employer::Pipeline::BackendRequired)
     end
   end
+
+  describe "#complete" do
+    it "completes job using its backend" do
+      job = stub
+      backend.should_receive(:complete).with(job)
+      pipeline.backend = backend
+      pipeline.complete(job)
+    end
+
+    it "fails when no backend is set" do
+      expect { pipeline.complete(stub) }.to raise_error(Employer::Pipeline::BackendRequired)
+    end
+  end
+
+  describe "#reset" do
+    it "resets the job using its backend" do
+      job = stub
+      backend.should_receive(:reset).with(job)
+      pipeline.backend = backend
+      pipeline.reset(job)
+    end
+
+    it "fails when no backend is set" do
+      expect { pipeline.reset(stub) }.to raise_error(Employer::Pipeline::BackendRequired)
+    end
+  end
 end
