@@ -45,6 +45,36 @@ describe Employer::Job do
     end
   end
 
+  describe "#reset" do
+    it "informs the pipeline the job must be reset" do
+      pipeline.should_receive(:reset).with(job)
+      job.pipeline = pipeline
+      job.reset
+    end
+
+    it "raises when there is no pipeline set" do
+      expect { job.reset }.to raise_error(Employer::Job::NoPipeline)
+    end
+  end
+
+  describe "#fail" do
+    it "informs the pipeline the job has failed" do
+      pipeline.should_receive(:fail).with(job)
+      job.pipeline = pipeline
+      job.fail
+    end
+
+    it "raises when there is no pipeline set" do
+      expect { job.fail }.to raise_error(Employer::Job::NoPipeline)
+    end
+  end
+
+  describe "#try_again?" do
+    it "returns false" do
+      job.try_again?.should be_false
+    end
+  end
+
   describe ".attribute" do
     it "adds attribute accessors" do
       job.name.should be_nil

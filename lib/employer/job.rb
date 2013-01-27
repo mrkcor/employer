@@ -49,6 +49,20 @@ module Employer
       pipeline.complete(self)
     end
 
+    def fail
+      raise NoPipeline if pipeline.nil?
+      pipeline.fail(self)
+    end
+
+    def reset
+      raise NoPipeline if pipeline.nil?
+      pipeline.reset(self)
+    end
+
+    def try_again?
+      false
+    end
+
     def serialize
       {
         id: id,
