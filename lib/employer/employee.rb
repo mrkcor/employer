@@ -28,5 +28,8 @@ module Employer
     def free?
       @free
     end
+
+    def join
+    end
   end
 end

@@ -2,7 +2,7 @@ require "employer/boss"
 
 describe Employer::Boss do
   let(:pipeline) { double("Pipeline", dequeue: nil) }
-  let(:employee) { double("Employee", work: nil, free?: true) }
+  let(:employee) { double("Employee", work: nil, free?: true, join: nil) }
   let(:boss) { Employer::Boss.new }
 
   describe "#allocate_pipeline" do
@@ -31,9 +31,9 @@ describe Employer::Boss do
     let(:job1) { double("Job 1") }
     let(:job2) { double("Job 2") }
     let(:pipeline) { double("Pipeline") }
-    let(:employee1) { double("Employee 1", free?: true, work: nil) }
-    let(:employee2) { double("Employee 2", free?: true, work: nil) }
-    let(:employee3) { double("Employee 3", free?: true, work: nil) }
+    let(:employee1) { double("Employee 1", free?: true, work: nil, join: nil) }
+    let(:employee2) { double("Employee 2", free?: true, work: nil, join: nil) }
+    let(:employee3) { double("Employee 3", free?: true, work: nil, join: nil) }
 
     before(:each) do
       pipeline.stub(:dequeue).and_return(job1, job2, nil, nil)
@@ -109,8 +109,8 @@ describe Employer::Boss do
   end
 
   describe "#busy_employees" do
-    let(:free_employee) { double("Employee", work: nil, free?: true) }
-    let(:busy_employee) { double("Employee", work: nil, free?: false) }
+    let(:free_employee) { double("Employee", work: nil, join: nil, free?: true) }
+    let(:busy_employee) { double("Employee", work: nil, join: nil, free?: false) }
 
     it "returns the busy employees" do
       boss.allocate_employee(busy_employee)
@@ -125,8 +125,8 @@ describe Employer::Boss do
   end
 
   describe "#free_employee" do
-    let(:free_employee) { double("Employee", work: nil, free?: true) }
-    let(:busy_employee) { double("Employee", work: nil, free?: false) }
+    let(:free_employee) { double("Employee", work: nil, join: nil, free?: true) }
+    let(:busy_employee) { double("Employee", work: nil, join: nil, free?: false) }
 
     it "returns the first free employee" do
       boss.allocate_employee(busy_employee)

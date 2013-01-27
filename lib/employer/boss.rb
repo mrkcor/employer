@@ -17,7 +17,7 @@ module Employer
     end
 
     def allocate_employee(employee)
-      raise InvalidEmployee unless employee.respond_to?(:work) && employee.respond_to?(:free?)
+      raise InvalidEmployee if [:work, :free?, :join].find { |message| !employee.respond_to?(message) }
       employees << employee
     end
 
