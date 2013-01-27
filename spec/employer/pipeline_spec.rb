@@ -2,7 +2,7 @@ require "employer/pipeline"
 
 describe Employer::Pipeline do
   let(:pipeline) { Employer::Pipeline.new }
-  let(:backend) { double("Pipeline backend", enqueue: nil, dequeue: nil) }
+  let(:backend) { double("Pipeline backend", enqueue: nil, dequeue: nil, complete: nil, reset: nil, fail: nil) }
 
   describe "configurable backend" do
     it "accepts a compatible backend" do
@@ -12,8 +12,6 @@ describe Employer::Pipeline do
 
     it "rejects an incompatible backend" do
       expect { pipeline.backend = double }.to raise_error(Employer::Pipeline::InvalidBackend)
-      expect { pipeline.backend = double(enqueue: nil) }.to raise_error(Employer::Pipeline::InvalidBackend)
-      expect { pipeline.backend = double(dequeue: nil) }.to raise_error(Employer::Pipeline::InvalidBackend)
     end
   end
 
@@ -87,6 +85,19 @@ describe Employer::Pipeline do
 
     it "fails when no backend is set" do
       expect { pipeline.reset(double) }.to raise_error(Employer::Pipeline::BackendRequired)
+    end
+  end
+
+  describe "#fail" do
+    it "fails the job using its backend" do
+      job = double("Job")
+      backend.should_receive(:fail).with(job)
+      pipeline.backend = backend
+      pipeline.fail(job)
+    end
+
+    it "fails when no backend is set" do
+      expect { pipeline.fail(double) }.to raise_error(Employer::Pipeline::BackendRequired)
     end
   end
 end

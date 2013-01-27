@@ -4,7 +4,7 @@ require_relative "pipeline/backend_required"
 module Employer
   class Pipeline
     def backend=(backend)
-      raise InvalidBackend unless backend.respond_to?(:enqueue) && backend.respond_to?(:dequeue)
+      raise InvalidBackend if [:enqueue, :dequeue, :complete, :reset, :fail].find { |message| !backend.respond_to?(message) }
       @backend = backend
     end
 
@@ -36,6 +36,11 @@ module Employer
     def reset(job)
       raise BackendRequired if backend.nil?
       backend.reset(job)
+    end
+
+    def fail(job)
+      raise BackendRequired if backend.nil?
+      backend.fail(job)
     end
 
     private
