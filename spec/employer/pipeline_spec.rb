@@ -2,7 +2,7 @@ require "employer/pipeline"
 
 describe Employer::Pipeline do
   let(:pipeline) { Employer::Pipeline.new }
-  let(:backend) { stub(enqueue: nil, dequeue: nil) }
+  let(:backend) { double("Pipeline backend", enqueue: nil, dequeue: nil) }
 
   describe "configurable backend" do
     it "accepts a compatible backend" do
@@ -11,14 +11,14 @@ describe Employer::Pipeline do
     end
 
     it "rejects an incompatible backend" do
-      expect { pipeline.backend = stub }.to raise_error(Employer::Pipeline::InvalidBackend)
-      expect { pipeline.backend = stub(enqueue: nil) }.to raise_error(Employer::Pipeline::InvalidBackend)
-      expect { pipeline.backend = stub(dequeue: nil) }.to raise_error(Employer::Pipeline::InvalidBackend)
+      expect { pipeline.backend = double }.to raise_error(Employer::Pipeline::InvalidBackend)
+      expect { pipeline.backend = double(enqueue: nil) }.to raise_error(Employer::Pipeline::InvalidBackend)
+      expect { pipeline.backend = double(dequeue: nil) }.to raise_error(Employer::Pipeline::InvalidBackend)
     end
   end
 
   describe "#enqueue" do
-    let(:job) { stub }
+    let(:job) { double("Job") }
 
     it "serializes and then enqueues jobs using its backend" do
       job_id = 1
@@ -40,7 +40,7 @@ describe Employer::Pipeline do
     it "dequeues job using its backend and properly instantiates it" do
       stub_const("TestJob", Class.new)
       job_id = 1
-      job = stub(id: job_id)
+      job = double("Job", id: job_id)
       serialized_job = {id: job_id, class: "TestJob"}
 
       backend.should_receive(:dequeue).and_return(serialized_job)
@@ -65,27 +65,27 @@ describe Employer::Pipeline do
 
   describe "#complete" do
     it "completes job using its backend" do
-      job = stub
+      job = double("Job")
       backend.should_receive(:complete).with(job)
       pipeline.backend = backend
       pipeline.complete(job)
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.complete(stub) }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.complete(double) }.to raise_error(Employer::Pipeline::BackendRequired)
     end
   end
 
   describe "#reset" do
     it "resets the job using its backend" do
-      job = stub
+      job = double("Job")
       backend.should_receive(:reset).with(job)
       pipeline.backend = backend
       pipeline.reset(job)
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.reset(stub) }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.reset(double) }.to raise_error(Employer::Pipeline::BackendRequired)
     end
   end
 end
