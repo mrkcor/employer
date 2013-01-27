@@ -5,8 +5,9 @@ describe Employer::Employee do
   let(:job) { double("Job", perform: nil) }
 
   describe "#work" do
-    it "performs the job" do
+    it "performs the job and marks it as complete" do
       job.should_receive(:perform)
+      job.should_receive(:complete)
       employee.work(job)
     end
 

@@ -5,6 +5,7 @@ module Employer
     def work(job)
       raise InvalidJob unless job.respond_to?(:perform)
       job.perform
+      job.complete
     end
   end
 end
