@@ -45,6 +45,7 @@ describe Employer::Pipeline do
 
       backend.should_receive(:dequeue).and_return(serialized_job)
       TestJob.should_receive(:deserialize).and_return(job)
+      job.should_receive(:pipeline=).with(pipeline)
 
       pipeline.backend = backend
       dequeued_job = pipeline.dequeue

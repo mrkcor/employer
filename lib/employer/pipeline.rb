@@ -22,7 +22,9 @@ module Employer
       raise BackendRequired if backend.nil?
       if serialized_job = backend.dequeue
         job_class = constantize(serialized_job[:class])
-        job_class.deserialize(serialized_job)
+        dequeued_job = job_class.deserialize(serialized_job)
+        dequeued_job.pipeline = self
+        dequeued_job
       end
     end
 
