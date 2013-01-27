@@ -71,6 +71,16 @@ describe Employer::Boss do
     end
   end
 
+  describe "#wait_on_employees" do
+    it "waits for all employees to finish their work" do
+      employee_free = false
+      employee.stub(:free?) { employee_free }
+      employee.should_receive(:join) { employee_free = true }
+      boss.allocate_employee(employee)
+      boss.wait_on_employees
+    end
+  end
+
   describe "#delegate" do
     let(:job) { double("Job") }
 
@@ -95,6 +105,22 @@ describe Employer::Boss do
       employee.should_receive(:free?).and_return(false)
       boss.allocate_employee(employee)
       boss.employee_free?.should be_false
+    end
+  end
+
+  describe "#busy_employees" do
+    let(:free_employee) { double("Employee", work: nil, free?: true) }
+    let(:busy_employee) { double("Employee", work: nil, free?: false) }
+
+    it "returns the busy employees" do
+      boss.allocate_employee(busy_employee)
+      boss.allocate_employee(free_employee)
+      boss.busy_employees.should eq([busy_employee])
+    end
+
+    it "returns [] when there is are no busy employees" do
+      boss.allocate_employee(free_employee)
+      boss.busy_employees.should eq([])
     end
   end
 

@@ -27,9 +27,17 @@ module Employer
       end
     end
 
+    def wait_on_employees
+      busy_employees.each(&:join)
+    end
+
     def delegate(job)
       raise NoEmployeeFree unless employee = free_employee
       employee.work(job)
+    end
+
+    def busy_employees
+      employees.select { |employee| !employee.free? }
     end
 
     def free_employee
