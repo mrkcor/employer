@@ -10,6 +10,7 @@ describe Employer::Job do
     end
   end
   let(:job) { job_class.new }
+  let(:pipeline) { double("Pipeline", complete: nil, reset: nil) }
 
   before(:each) do
     stub_const("Namespaced::TestJob", job_class)
@@ -19,6 +20,29 @@ describe Employer::Job do
     job.id.should be_nil
     job.id = 1
     job.id.should eq(1)
+  end
+
+  it "can reference a pipeline" do
+    job.pipeline.should be_nil
+    job.pipeline = pipeline
+    job.pipeline.should eq(pipeline)
+  end
+
+  it "rejects invalid an pipeline" do
+    pipeline = double("Pipeline")
+    expect { job.pipeline = double }.to raise_error(Employer::Job::InvalidPipeline)
+  end
+
+  describe "#complete" do
+    it "informs the pipeline the job is complete" do
+      pipeline.should_receive(:complete).with(job)
+      job.pipeline = pipeline
+      job.complete
+    end
+
+    it "raises when there is no pipeline set" do
+      expect { job.complete }.to raise_error(Employer::Job::NoPipeline)
+    end
   end
 
   describe ".attribute" do

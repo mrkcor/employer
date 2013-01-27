@@ -1,8 +1,11 @@
 require_relative "job/class_mismatch"
+require_relative "job/invalid_pipeline"
+require_relative "job/no_pipeline"
 
 module Employer
   module Job
     attr_accessor :id
+    attr_reader :pipeline
 
     module ClassMethods
       def attribute(name)
@@ -34,6 +37,16 @@ module Employer
 
     def attribute_names
       self.class.attribute_names
+    end
+
+    def pipeline=(pipeline)
+      raise InvalidPipeline unless pipeline.respond_to?(:complete) && pipeline.respond_to?(:reset)
+      @pipeline = pipeline
+    end
+
+    def complete
+      raise NoPipeline if pipeline.nil?
+      pipeline.complete(self)
     end
 
     def serialize
