@@ -27,7 +27,7 @@ describe Employer::Boss do
     end
   end
 
-  describe "#utilize_employees" do
+  describe "#manage" do
     let(:job1) { double("Job 1") }
     let(:job2) { double("Job 2") }
     let(:pipeline) { double("Pipeline") }
@@ -51,7 +51,7 @@ describe Employer::Boss do
       boss.allocate_employee(employee1)
       boss.allocate_employee(employee2)
       boss.allocate_employee(employee3)
-      boss.utilize_employees
+      boss.manage
     end
 
     it "puts free employees to work" do
@@ -59,15 +59,15 @@ describe Employer::Boss do
       employee1.stub(:free?) { employee1_free }
       employee1.should_receive(:work).with(job1) { employee1_free = false }
       boss.allocate_employee(employee1)
-      boss.utilize_employees
+      boss.manage
 
       employee1_free = true
       employee1.should_receive(:work).with(job2) { employee1_free = false }
-      boss.utilize_employees
+      boss.manage
 
       employee1_free = true
       employee1.should_receive(:work).never
-      boss.utilize_employees
+      boss.manage
     end
   end
 

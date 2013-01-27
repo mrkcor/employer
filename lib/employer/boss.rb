@@ -21,7 +21,7 @@ module Employer
       employees << employee
     end
 
-    def utilize_employees
+    def manage
       while employee_free? && job = find_work
         delegate(job)
       end
