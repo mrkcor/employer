@@ -1,3 +1,7 @@
 #!/usr/bin/env ruby
 
-# TODO: This bin should start the Employer
+require "bundler/setup"
+require "employer"
+require "employer/cli"
+
+Employer::CLI.start(ARGV)
