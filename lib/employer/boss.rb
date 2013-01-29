@@ -17,12 +17,20 @@ module Employer
       employees << employee
     end
 
+    def stop_managing
+      @keep_going = false
+    end
+
     def manage
-      loop do
+      @keep_going = true
+
+      while @keep_going
         delegate_work
         progress_update
         sleep 0.1
       end
+
+      wait_on_employees
     end
 
     def delegate_work

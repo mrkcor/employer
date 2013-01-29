@@ -60,6 +60,13 @@ describe Employer::Workshop do
     end
   end
 
+  describe "#stop" do
+    it "should call stop_managing on the boss" do
+      boss.should_receive(:stop_managing)
+      workshop.stop
+    end
+  end
+
   describe "#pipeline" do
     it "returns the pipeline" do
       pipeline = double("Pipeline").as_null_object

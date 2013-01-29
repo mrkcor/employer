@@ -13,6 +13,10 @@ module Employer
       @boss.manage
     end
 
+    def stop
+      @boss.stop_managing
+    end
+
     def pipeline
       @boss.pipeline
     end
