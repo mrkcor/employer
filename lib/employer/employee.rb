@@ -26,7 +26,7 @@ module Employer
     end
 
     def wait_for_completion
-      job_process_state(true)
+      work_state(true)
     end
 
     def free?
@@ -34,42 +34,42 @@ module Employer
     end
 
     def work_in_progress?
-      true if job_process_state == :busy
+      true if work_state == :busy
     end
 
     def work_completed?
-      true if job_process_state == :complete
+      true if work_state == :complete
     end
 
     def work_failed?
-      true if job_process_state == :failed
+      true if work_state == :failed
     end
 
     def free
       return unless work_completed? || work_failed?
-      @job_process_state = nil
+      @work_state = nil
       @job_pid = nil
       @job = nil
     end
 
     private
 
-    def job_process_state(wait = false)
-      return @job_process_state if [:complete, :failed].include?(@job_process_state)
+    def work_state(wait = false)
+      return @work_state if [:complete, :failed].include?(@work_state)
 
-      @job_process_state = :busy
+      @work_state = :busy
 
       flags = wait == false ? Process::WNOHANG : 0
       pid, status = Process.waitpid2(@job_pid, flags)
       if pid
         if status.exitstatus == 0
-          @job_process_state = :complete
+          @work_state = :complete
         else
-          @job_process_state = :failed
+          @work_state = :failed
         end
       end
 
-      @job_process_state
+      @work_state
     end
   end
 end
