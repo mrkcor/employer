@@ -1,0 +1,5 @@
+require_relative "errors/error"
+require_relative "errors/employee_busy"
+require_relative "errors/job_class_mismatch"
+require_relative "errors/no_employee_free"
+require_relative "errors/pipeline_backend_required"

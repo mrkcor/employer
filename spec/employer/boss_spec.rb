@@ -142,7 +142,7 @@ describe Employer::Boss do
     end
 
     it "will raise when there is no free employee" do
-      expect { boss.delegate_job(job) }.to raise_error(Employer::Boss::NoEmployeeFree)
+      expect { boss.delegate_job(job) }.to raise_error(Employer::Errors::NoEmployeeFree)
     end
   end
 

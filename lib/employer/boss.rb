@@ -1,4 +1,4 @@
-require_relative "boss/no_employee_free"
+require_relative "errors"
 
 module Employer
   class Boss
@@ -63,7 +63,7 @@ module Employer
     end
 
     def delegate_job(job)
-      raise NoEmployeeFree unless employee = free_employee
+      raise Employer::Errors::NoEmployeeFree unless employee = free_employee
       employee.work(job)
     end
 

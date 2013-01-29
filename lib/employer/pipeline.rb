@@ -1,4 +1,4 @@
-require_relative "pipeline/backend_required"
+require_relative "errors"
 
 module Employer
   class Pipeline
@@ -11,13 +11,13 @@ module Employer
     end
 
     def enqueue(job)
-      raise BackendRequired if backend.nil?
+      raise Employer::Errors::PipelineBackendRequired if backend.nil?
       serialized_job = job.serialize
       backend.enqueue(serialized_job)
     end
 
     def dequeue
-      raise BackendRequired if backend.nil?
+      raise Employer::Errors::PipelineBackendRequired if backend.nil?
       if serialized_job = backend.dequeue
         job_class = constantize(serialized_job[:class])
         job_class.deserialize(serialized_job)
@@ -25,17 +25,17 @@ module Employer
     end
 
     def complete(job)
-      raise BackendRequired if backend.nil?
+      raise Employer::Errors::PipelineBackendRequired if backend.nil?
       backend.complete(job)
     end
 
     def reset(job)
-      raise BackendRequired if backend.nil?
+      raise Employer::Errors::PipelineBackendRequired if backend.nil?
       backend.reset(job)
     end
 
     def fail(job)
-      raise BackendRequired if backend.nil?
+      raise Employer::Errors::PipelineBackendRequired if backend.nil?
       backend.fail(job)
     end
 

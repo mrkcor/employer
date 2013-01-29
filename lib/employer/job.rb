@@ -1,4 +1,4 @@
-require_relative "job/class_mismatch"
+require_relative "errors"
 
 module Employer
   module Job
@@ -18,7 +18,7 @@ module Employer
       end
 
       def deserialize(serialized_job)
-        raise ClassMismatch unless serialized_job[:class] == self.name
+        raise Employer::Errors::JobClassMismatch unless serialized_job[:class] == self.name
         job = new
         job.id = serialized_job[:id]
         serialized_job[:attributes].each_pair do |attribute, value|

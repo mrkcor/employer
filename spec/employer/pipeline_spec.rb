@@ -23,7 +23,7 @@ describe Employer::Pipeline do
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.enqueue(job) }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.enqueue(job) }.to raise_error(Employer::Errors::PipelineBackendRequired)
     end
   end
 
@@ -50,7 +50,7 @@ describe Employer::Pipeline do
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.dequeue }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.dequeue }.to raise_error(Employer::Errors::PipelineBackendRequired)
     end
   end
 
@@ -62,7 +62,7 @@ describe Employer::Pipeline do
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.complete(double) }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.complete(double) }.to raise_error(Employer::Errors::PipelineBackendRequired)
     end
   end
 
@@ -74,7 +74,7 @@ describe Employer::Pipeline do
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.reset(double) }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.reset(double) }.to raise_error(Employer::Errors::PipelineBackendRequired)
     end
   end
 
@@ -86,7 +86,7 @@ describe Employer::Pipeline do
     end
 
     it "fails when no backend is set" do
-      expect { pipeline.fail(double) }.to raise_error(Employer::Pipeline::BackendRequired)
+      expect { pipeline.fail(double) }.to raise_error(Employer::Errors::PipelineBackendRequired)
     end
   end
 end

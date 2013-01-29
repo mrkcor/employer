@@ -1,7 +1,5 @@
-require "employer/employee"
-
-describe Employer::Employee do
-  let(:employee) { Employer::Employee.new }
+shared_examples "an employee" do
+  let(:employee) { described_class.new }
   let(:completing_job_class) do
     Class.new do
       def perform
@@ -22,18 +20,9 @@ describe Employer::Employee do
   let(:job) { double("Job") }
 
   describe "#work" do
-    it "forks to perform job, and becomes busy" do
-      employee.free?.should be_true
-      employee.job.should be_nil
-      employee.should_receive(:fork)
-      employee.work(job)
-      employee.free?.should be_false
-      employee.job.should eq(job)
-    end
-
     it "rejects a job while its already working on one" do
       employee.should_receive(:free?).and_return(false)
-      expect { employee.work(job) }.to raise_error(Employer::Employee::Busy)
+      expect { employee.work(job) }.to raise_error(Employer::Errors::EmployeeBusy)
     end
   end
 

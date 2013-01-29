@@ -83,7 +83,7 @@ describe Employer::Job do
 
     it "must have the right class name" do
       serialized_job = {id: 1, class: "TestJob", attributes: {name: "Ball", shape: :circle}}
-      expect { Namespaced::TestJob.deserialize(serialized_job) }.to raise_error(Employer::Job::ClassMismatch)
+      expect { Namespaced::TestJob.deserialize(serialized_job) }.to raise_error(Employer::Errors::JobClassMismatch)
     end
   end
 end
