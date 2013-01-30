@@ -1,1 +1,1 @@
---color --format documentation -I. -rpry
+--color --format documentation -I. -rspec_helper
