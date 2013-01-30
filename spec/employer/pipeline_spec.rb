@@ -13,7 +13,7 @@ describe Employer::Pipeline do
   describe "#enqueue" do
     it "serializes and then enqueues jobs using its backend" do
       job_id = 1
-      serialized_job = {}
+      serialized_job = {class: "TestJob"}
 
       job.should_receive(:serialize).and_return(serialized_job)
       backend.should_receive(:enqueue).with(serialized_job).and_return(job_id)
