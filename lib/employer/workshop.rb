@@ -9,6 +9,11 @@ module Employer
       workshop = new(boss, &block)
     end
 
+    def self.pipeline(&block)
+      workshop = setup(&block)
+      workshop.pipeline
+    end
+
     def run
       @boss.manage
     end

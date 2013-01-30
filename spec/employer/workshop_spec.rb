@@ -53,6 +53,25 @@ describe Employer::Workshop do
     end
   end
 
+  describe ".pipeline" do
+    it "sets up a pipeline to feed the workshop" do
+      boss = double("Boss").as_null_object
+      Employer::Boss.should_receive(:new).and_return(boss)
+      pipeline = double("Pipeline").as_null_object
+      pipeline_backend = double("Pipeline backend")
+      Employer::Pipeline.should_receive(:new).and_return(pipeline)
+      boss.stub(:pipeline).and_return(pipeline)
+
+      workshop_pipeline = Employer::Workshop.pipeline do
+        pipeline_backend pipeline_backend
+        forking_employees 3
+        threading_employees 2
+      end
+
+      workshop_pipeline.should eq(pipeline)
+    end
+  end
+
   describe "#run" do
     it "should call manage on the boss" do
       boss.should_receive(:manage)
