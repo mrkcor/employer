@@ -66,8 +66,9 @@ CONFIG
       Employer::Pipeline.should_receive(:new).and_return(pipeline)
       pipeline_backend = double("Pipeline backend")
       TestPipelineBackend.should_receive(:new).and_return(pipeline_backend)
+      File.should_receive(:read).with("config/employee.rb").and_return(config_code)
 
-      workshop_pipeline = Employer::Workshop.pipeline(config_code)
+      workshop_pipeline = Employer::Workshop.pipeline("config/employee.rb")
       workshop_pipeline.should eq(pipeline)
     end
   end
