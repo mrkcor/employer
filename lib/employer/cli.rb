@@ -30,6 +30,13 @@ module Employer
 
       File.open(options[:config], "w") do |file|
         file.write <<CONFIG
+# If you're using Rails the below line requires config/environment to setup the
+# Rails environment. If you're not using Rails you'll want to require something
+# here that sets up Employer's environment appropriately (making available the
+# classes that your jobs need to do their work, providing the connection to
+# your database, etc.)
+# require_relative "environment"
+
 require "employer-mongoid"
 
 # Setup the backend for the pipeline, this is where the boss gets the jobs to
