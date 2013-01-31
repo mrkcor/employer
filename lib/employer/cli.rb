@@ -26,7 +26,7 @@ module Employer
         exit 1
       end
 
-      FileUtils.mkdir("config")
+      FileUtils.mkdir("config") unless File.directory?("config")
 
       File.open(options[:config], "w") do |file|
         file.write <<CONFIG
