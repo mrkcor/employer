@@ -13,7 +13,7 @@ module Employer
         exit 1
       end
 
-      workshop = Employer::Workshop.setup { load(options[:config]) }
+      workshop = Employer::Workshop.setup(File.read(options[:config]))
       Signal.trap("INT") { workshop.stop }
       workshop.run
     end
@@ -42,7 +42,7 @@ require "employer-mongoid"
 # Setup the backend for the pipeline, this is where the boss gets the jobs to
 # process. See the documentation for details on writing your own pipeline
 # backend.
-pipeline_backend Employer::Pipeline::Backend::Mongoid.new
+pipeline_backend Employer::Mongoid::Pipeline.new
 
 # Use employees that fork subprocesses to perform jobs.
 forking_employees 4

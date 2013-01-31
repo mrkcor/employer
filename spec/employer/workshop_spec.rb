@@ -6,22 +6,25 @@ describe Employer::Workshop do
     stub_const("Employer::Pipeline", Class.new)
     stub_const("Employer::Employees::ForkingEmployee", Class.new)
     stub_const("Employer::Employees::ThreadingEmployee", Class.new)
+    stub_const("TestPipelineBackend", Class.new)
   end
 
   let(:boss) { double("Boss").as_null_object }
+  let(:config_code) do
+    <<CONFIG
+    pipeline_backend TestPipelineBackend.new
+    forking_employees 2
+CONFIG
+  end
   let(:workshop) do
-    backend = double("Pipeline backend")
     Employer::Boss.should_receive(:new).and_return(boss)
-
-    Employer::Workshop.setup do
-      pipeline_backend backend
-      forking_employees 2
-    end
+    Employer::Workshop.setup(config_code)
   end
 
   describe ".setup" do
     it "sets up a workshop" do
       pipeline_backend = double("Pipeline backend")
+      TestPipelineBackend.should_receive(:new).and_return(pipeline_backend)
       boss = double("Boss")
       pipeline = double("Pipeline")
       forking_employee1 = double("Forking Employee 1")
@@ -43,12 +46,13 @@ describe Employer::Workshop do
       boss.should_receive(:allocate_employee).with(threading_employee1)
       boss.should_receive(:allocate_employee).with(threading_employee2)
 
-      workshop = Employer::Workshop.setup do
-        pipeline_backend pipeline_backend
-        forking_employees 3
-        threading_employees 2
-      end
+      config_code = <<CONFIG
+      pipeline_backend TestPipelineBackend.new
+      forking_employees 3
+      threading_employees 2
+CONFIG
 
+      workshop = Employer::Workshop.setup(config_code)
       workshop.should be_instance_of(Employer::Workshop)
     end
   end
@@ -58,16 +62,12 @@ describe Employer::Workshop do
       boss = double("Boss").as_null_object
       Employer::Boss.should_receive(:new).and_return(boss)
       pipeline = double("Pipeline").as_null_object
-      pipeline_backend = double("Pipeline backend")
-      Employer::Pipeline.should_receive(:new).and_return(pipeline)
       boss.stub(:pipeline).and_return(pipeline)
+      Employer::Pipeline.should_receive(:new).and_return(pipeline)
+      pipeline_backend = double("Pipeline backend")
+      TestPipelineBackend.should_receive(:new).and_return(pipeline_backend)
 
-      workshop_pipeline = Employer::Workshop.pipeline do
-        pipeline_backend pipeline_backend
-        forking_employees 3
-        threading_employees 2
-      end
-
+      workshop_pipeline = Employer::Workshop.pipeline(config_code)
       workshop_pipeline.should eq(pipeline)
     end
   end

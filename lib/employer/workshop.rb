@@ -2,15 +2,15 @@ require_relative "errors"
 
 module Employer
   class Workshop
-    def self.setup(&block)
+    def self.setup(config_code)
       boss = Employer::Boss.new
       pipeline = Employer::Pipeline.new
       boss.pipeline = pipeline
-      workshop = new(boss, &block)
+      workshop = new(boss, config_code)
     end
 
-    def self.pipeline(&block)
-      workshop = setup(&block)
+    def self.pipeline(config_code)
+      workshop = setup(config_code)
       workshop.pipeline
     end
 
@@ -40,12 +40,12 @@ module Employer
       @boss.pipeline.backend = backend
     end
 
-    def initialize(boss, &block)
+    def initialize(boss, config_code)
       @boss = boss
       @forking_employees = 0
       @threading_employees = 0
 
-      instance_exec(&block)
+      instance_eval(config_code)
 
       @forking_employees.times do
         @boss.allocate_employee(Employer::Employees::ForkingEmployee.new)
