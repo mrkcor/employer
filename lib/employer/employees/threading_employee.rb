@@ -24,13 +24,13 @@ module Employer
       end
 
       def work_state(wait = false)
-        @thread.join if wait
+        @thread.join if wait && @thread
         return @work_state
       end
 
       def force_work_stop
         return if free?
-        Thread.kill(@thread)
+        @thread.kill
         work_state(true)
       end
     end
