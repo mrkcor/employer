@@ -38,9 +38,7 @@ class NamePutsJob
   attribute :last_name
   attribute :tries
 
-  def initialize(first_name, last_name)
-    self.first_name = first_name
-    self.last_name = last_name
+  def initialize
     tries ||= 0 
   end
 
@@ -147,7 +145,10 @@ In your application code you can obtain a pipeline to enqueue jobs with like so:
 pipeline = Employer::Workshop.enqueue("/path/to/employer\_config.rb")
 
 # Enqueue a job
-pipeline.enqueue(NamePutsJob.new("Mark", "Kremer"))
+job = NamePutsJob.new
+job.first_name = "Mark"
+job.last_name = "Kremer"
+pipeline.enqueue(job)
 ```
 
 ## Contributing
