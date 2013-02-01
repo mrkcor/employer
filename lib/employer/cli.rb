@@ -13,8 +13,18 @@ module Employer
         exit 1
       end
 
+      int_count = 0
       workshop = Employer::Workshop.setup(File.read(options[:config]))
-      Signal.trap("INT") { workshop.stop }
+
+      Signal.trap("INT") do
+        int_count += 1
+        if int_count == 1
+          workshop.stop
+        else
+          workshop.stop_now
+        end
+      end
+
       workshop.run
     end
 
