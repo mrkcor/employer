@@ -3,11 +3,11 @@ require "fileutils"
 
 module Employer
   class CLI < Thor
-    default_task :process
+    default_task :work
 
-    desc "process", "Process jobs"
-    option :config, default: "config/employer.rb", desc: "Configuration file to setup Employer"
-    def process
+    desc "work", "Process jobs"
+    option :config, default: "config/employer.rb", desc: "Config file to use"
+    def work
       unless File.exists?(options[:config])
         STDERR.puts "#{options[:config]} does not exist."
         exit 1
@@ -28,9 +28,9 @@ module Employer
       workshop.run
     end
 
-    desc "configure", "Generate configuration file"
-    option :config, default: "config/employer.rb", desc: "Path to configuration file"
-    def configure
+    desc "config", "Generate config file"
+    option :config, default: "config/employer.rb", desc: "Path to config file"
+    def config
       if File.exists?(options[:config])
         STDERR.puts "#{options[:config]} already exists."
         exit 1
