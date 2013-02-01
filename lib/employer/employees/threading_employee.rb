@@ -31,7 +31,7 @@ module Employer
       def force_work_stop
         return if free?
         @thread.kill
-        work_state(true)
+        @work_state = :failed
       end
     end
   end
