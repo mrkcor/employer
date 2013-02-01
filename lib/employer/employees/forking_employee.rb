@@ -10,7 +10,7 @@ module Employer
           state = nil
 
           begin
-            job.perform
+            perform_job
             state = 0
           ensure
             state = 1 if state.nil?

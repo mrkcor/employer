@@ -10,6 +10,10 @@ module Employer
         @job = job
       end
 
+      def perform_job
+        job.perform
+      end
+
       def wait_for_completion
         work_state(true)
       end

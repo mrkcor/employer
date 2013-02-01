@@ -9,7 +9,7 @@ module Employer
 
         @thread = Thread.new do
           begin
-            job.perform
+            perform_job
             @work_state = :complete
           rescue => exception
           ensure
