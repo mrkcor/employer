@@ -45,7 +45,7 @@ module Employer
 # here that sets up Employer's environment appropriately (making available the
 # classes that your jobs need to do their work, providing the connection to
 # your database, etc.)
-# require_relative "environment"
+# require "./config/environment"
 
 require "employer-mongoid"
 
@@ -54,10 +54,14 @@ require "employer-mongoid"
 # backend.
 pipeline_backend Employer::Mongoid::Pipeline.new
 
-# Use employees that fork subprocesses to perform jobs.
+# Use employees that fork subprocesses to perform jobs. You cannot use these
+# with JRuby, because JRuby doesn't support Process#fork.
 forking_employees 4
 
-# Use employees that run their jobs in threads.
+# Use employees that run their jobs in threads, you can use these when using
+# JRuby. While threaded employees also work with MRI they are limited by the
+# GIL (this may or may not be a problem depending on the type of work your jobs
+# need to do).
 # threading_employees 4
 CONFIG
       end
