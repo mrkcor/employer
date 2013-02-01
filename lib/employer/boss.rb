@@ -70,6 +70,14 @@ module Employer
       end
     end
 
+    def stop_employees
+      busy_employees.each do |employee|
+        employee.stop_working
+        update_job_status(employee)
+        employee.free
+      end
+    end
+
     def delegate_job(job)
       raise Employer::Errors::NoEmployeeFree unless employee = free_employee
       employee.work(job)

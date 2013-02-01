@@ -14,6 +14,11 @@ module Employer
         work_state(true)
       end
 
+      def stop_working
+        return if work_completed? || work_failed?
+        force_work_stop
+      end
+
       def free?
         job.nil?
       end
@@ -37,6 +42,9 @@ module Employer
       end
 
       def work_state(wait = false)
+      end
+
+      def force_work_stop
       end
     end
   end

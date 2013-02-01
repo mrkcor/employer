@@ -77,6 +77,30 @@ shared_examples "an employee" do
     end
   end
 
+  describe "#stop_working" do
+    it "stops job immediately" do
+      employee.work(completing_job)
+      employee.should_receive(:force_work_stop).and_call_original
+      employee.stop_working
+      employee.work_in_progress?.should be_false
+      employee.free?.should be_false
+    end
+
+    it "just returns if the job just completed" do
+      employee.work(completing_job)
+      employee.wait_for_completion
+      employee.should_receive(:force_work_stop).never
+      employee.stop_working
+    end
+
+    it "just returns if the job just failed" do
+      employee.work(failing_job)
+      employee.wait_for_completion
+      employee.should_receive(:force_work_stop).never
+      employee.stop_working
+    end
+  end
+
   describe "#free" do
     before(:each) do
       employee.work(job)

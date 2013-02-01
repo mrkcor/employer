@@ -41,6 +41,12 @@ module Employer
 
         @work_state
       end
+
+      def force_work_stop
+        return if free?
+        Process.kill("KILL", @job_pid)
+        work_state(true)
+      end
     end
   end
 end

@@ -27,6 +27,12 @@ module Employer
         @thread.join if wait
         return @work_state
       end
+
+      def force_work_stop
+        return if free?
+        Thread.kill(@thread)
+        work_state(true)
+      end
     end
   end
 end

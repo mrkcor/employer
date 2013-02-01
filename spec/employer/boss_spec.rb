@@ -149,6 +149,21 @@ describe Employer::Boss do
     end
   end
 
+  describe "#stop_employees" do
+    it "will force all employees to stop their work" do
+      busy_employee = double("Busy employee", free?: false).as_null_object
+      free_employee = double("Free employee", free?: true)
+      boss.allocate_employee(free_employee)
+      boss.allocate_employee(busy_employee)
+      busy_employee.should_receive(:stop_working)
+      busy_employee.should_receive(:free)
+      free_employee.should_receive(:stop_working).never
+      free_employee.should_receive(:free).never
+      boss.should_receive(:update_job_status).with(busy_employee)
+      boss.stop_employees
+    end
+  end
+
   describe "#delegate_job" do
     let(:job) { double("Job") }
 
