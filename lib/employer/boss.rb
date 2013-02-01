@@ -2,11 +2,12 @@ require_relative "errors"
 
 module Employer
   class Boss
-    attr_reader :pipeline, :employees, :keep_going
+    attr_reader :pipeline, :employees, :keep_going, :sleep_time
 
     def initialize
       @pipeline = nil
       @employees = []
+      @sleep_time_index = 0
     end
 
     def pipeline=(pipeline)
@@ -27,16 +28,27 @@ module Employer
       while keep_going
         delegate_work
         progress_update
-        sleep 0.1
       end
 
       wait_on_employees
     end
 
     def delegate_work
-      while free_employee? && job = pipeline.dequeue
+      while free_employee? && job = get_work
         delegate_job(job)
       end
+    end
+
+    def get_work
+      sleep_times = [0.1, 0.5, 1, 2.5, 5]
+      if job = pipeline.dequeue
+        @sleep_time_index = 0
+      else
+        @sleep_time_index += 1 unless @sleep_time_index == (sleep_times.count - 1)
+      end
+      @sleep_time = sleep_times[@sleep_time_index]
+      sleep(sleep_time)
+      job
     end
 
     def progress_update

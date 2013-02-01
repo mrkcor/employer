@@ -46,7 +46,7 @@ describe Employer::Boss do
     let(:employee3) { double("Employee 3") }
 
     before(:each) do
-      pipeline.stub(:dequeue).and_return(job1, job2, nil, nil)
+      boss.stub(:get_work).and_return(job1, job2, nil, nil)
       boss.pipeline = pipeline
     end
 
@@ -79,6 +79,39 @@ describe Employer::Boss do
       employee1_free = true
       employee1.should_receive(:work).never
       boss.delegate_work
+    end
+  end
+
+  describe "#get_work" do
+    before(:each) do
+      pipeline.stub(:dequeue).and_return(nil)
+      boss.pipeline = pipeline
+    end
+
+    it "increases sleep time each time it gets no job" do
+      boss.should_receive(:sleep).with(0.5).ordered
+      boss.get_work.should be_nil
+      boss.should_receive(:sleep).with(1).ordered
+      boss.get_work.should be_nil
+      boss.should_receive(:sleep).with(2.5).ordered
+      boss.get_work.should be_nil
+      boss.should_receive(:sleep).with(5).ordered
+      boss.get_work.should be_nil
+      boss.should_receive(:sleep).with(5).ordered
+      boss.get_work.should be_nil
+    end
+
+    it "increases resets sleep time when it gets a job" do
+      job = double("Job")
+      pipeline.stub(:dequeue).and_return(nil, nil, job, job)
+      boss.should_receive(:sleep).with(0.5).ordered
+      boss.get_work.should be_nil
+      boss.should_receive(:sleep).with(1).ordered
+      boss.get_work.should be_nil
+      boss.should_receive(:sleep).with(0.1).ordered
+      boss.get_work.should eq(job)
+      boss.should_receive(:sleep).with(0.1).ordered
+      boss.get_work.should eq(job)
     end
   end
 
