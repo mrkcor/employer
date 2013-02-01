@@ -2,7 +2,7 @@ require_relative "errors"
 
 module Employer
   class Boss
-    attr_reader :pipeline, :employees
+    attr_reader :pipeline, :employees, :keep_going
 
     def initialize
       @pipeline = nil
@@ -24,7 +24,7 @@ module Employer
     def manage
       @keep_going = true
 
-      while @keep_going
+      while keep_going
         delegate_work
         progress_update
         sleep 0.1

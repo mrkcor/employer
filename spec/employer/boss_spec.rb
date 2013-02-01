@@ -20,6 +20,24 @@ describe Employer::Boss do
     boss.employees.should eq([john, jane])
   end
 
+  describe "#manage" do
+    it "delegates work and collects progress updates until stopped, and then wait on employees" do
+      boss.should_receive(:keep_going).and_return(true, true, false)
+      boss.should_receive(:delegate_work).twice
+      boss.should_receive(:progress_update).twice
+      boss.should_receive(:wait_on_employees)
+      boss.manage
+    end
+  end
+
+  describe "#stop_managing" do
+    it "sets keep_going to false" do
+      boss.keep_going.should eq(nil)
+      boss.stop_managing
+      boss.keep_going.should eq(false)
+    end
+  end
+
   describe "#delegate_work" do
     let(:job1) { double("Job 1") }
     let(:job2) { double("Job 2") }
