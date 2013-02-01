@@ -22,6 +22,11 @@ module Employer
       @boss.stop_managing
     end
 
+    def stop_now
+      @boss.stop_managing
+      @boss.stop_employees
+    end
+
     def pipeline
       @boss.pipeline
     end

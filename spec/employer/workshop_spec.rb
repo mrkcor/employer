@@ -87,6 +87,14 @@ CONFIG
     end
   end
 
+  describe "#stop_now" do
+    it "should call stop_managing and stop_employees on the boss" do
+      boss.should_receive(:stop_managing)
+      boss.should_receive(:stop_employees)
+      workshop.stop_now
+    end
+  end
+
   describe "#pipeline" do
     it "returns the pipeline" do
       pipeline = double("Pipeline").as_null_object
