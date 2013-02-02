@@ -85,6 +85,10 @@ class CustomPipelineBackend
   def dequeue
   end
 
+  # clear must clear the backend of all its jobs
+  def clear
+  end
+
   # complete accepts a Job object, using its id the pipeline backend should
   # mark the job as complete
   def complete(job)
