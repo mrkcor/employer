@@ -28,6 +28,17 @@ module Employer
       workshop.run
     end
 
+    desc "clear", "Clear jobs"
+    option :config, default: "config/employer.rb", desc: "Config file to use"
+    def clear
+      unless File.exists?(options[:config])
+        STDERR.puts "#{options[:config]} does not exist."
+        exit 1
+      end
+
+      Employer::Workshop.pipeline(options[:config]).clear
+    end
+
     desc "config", "Generate config file"
     option :config, default: "config/employer.rb", desc: "Path to config file"
     def config
