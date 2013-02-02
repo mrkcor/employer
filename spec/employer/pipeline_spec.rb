@@ -54,6 +54,18 @@ describe Employer::Pipeline do
     end
   end
 
+  describe "#clear" do
+    it "clears all jobs using its backend" do
+      backend.should_receive(:clear)
+      pipeline.backend = backend
+      pipeline.clear
+    end
+
+    it "fails when no backend is set" do
+      expect { pipeline.clear }.to raise_error(Employer::Errors::PipelineBackendRequired)
+    end
+  end
+
   describe "#complete" do
     it "completes job using its backend" do
       backend.should_receive(:complete).with(job)

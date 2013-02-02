@@ -24,6 +24,11 @@ module Employer
       end
     end
 
+    def clear
+      raise Employer::Errors::PipelineBackendRequired if backend.nil?
+      backend.clear
+    end
+
     def complete(job)
       raise Employer::Errors::PipelineBackendRequired if backend.nil?
       backend.complete(job)
