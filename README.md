@@ -140,13 +140,13 @@ forking_employees 4
 The comments in the file pretty much explain how you should edit it.
 
 When setup properly you can start processing jobs by running `employer` (or
-`employer -c /path/to/employer\_config.rb`, likely prepended with `bundle exec`)
+`employer -c /path/to/employer_config.rb`, likely prepended with `bundle exec`)
 
 In your application code you can obtain a pipeline to enqueue jobs with like so:
 
 ```ruby
 # Obtain the pipeline
-pipeline = Employer::Workshop.enqueue("/path/to/employer\_config.rb")
+pipeline = Employer::Workshop.enqueue("/path/to/employer_config.rb")
 
 # Enqueue a job
 job = NamePutsJob.new
