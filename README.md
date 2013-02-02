@@ -1,4 +1,4 @@
-# Employer
+# Employer [![Build Status](https://travis-ci.org/mkremer/employer.png)](https://travis-ci.org/mkremer/employer)
 
 There comes a time in the life of an application that async job processing
 becomes a requirement. If you want something flexible that you can easily adapt
