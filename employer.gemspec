@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.version       = Employer::VERSION
   gem.authors       = ["Mark Kremer"]
   gem.email         = ["mark@without-brains.net"]
-  gem.summary       = %q{Job processing made easy}
+  gem.summary       = %q{Job processing with pluggable backends made easy}
   gem.homepage      = "https://github.com/mkremer/employer"
   gem.license       = "MIT"
 
@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency "thor", "~> 0.17"
 
+  gem.add_development_dependency "rake"
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "pry"
 end
