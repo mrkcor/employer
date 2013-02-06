@@ -1,105 +1,102 @@
-require "employer/workshop"
+require "employer"
 
 describe Employer::Workshop do
   before(:each) do
-    stub_const("Employer::Boss", Class.new)
-    stub_const("Employer::Pipeline", Class.new)
-    stub_const("Employer::Employees::ForkingEmployee", Class.new)
-    stub_const("Employer::Employees::ThreadingEmployee", Class.new)
     stub_const("TestPipelineBackend", Class.new)
   end
 
-  let(:boss) { double("Boss").as_null_object }
-  let(:config_code) do
-    <<CONFIG
-    pipeline_backend TestPipelineBackend.new
-    forking_employees 2
-CONFIG
-  end
-  let(:workshop) do
-    Employer::Boss.should_receive(:new).and_return(boss)
-    Employer::Workshop.setup(config_code)
-  end
+  let(:config_code) { "pipeline_backend TestPipelineBackend.new" }
 
   describe ".setup" do
-    it "sets up a workshop" do
-      pipeline_backend = double("Pipeline backend")
-      TestPipelineBackend.should_receive(:new).and_return(pipeline_backend)
-      boss = double("Boss")
-      pipeline = double("Pipeline")
-      forking_employee1 = double("Forking Employee 1")
-      forking_employee2 = double("Forking Employee 2")
-      forking_employee3 = double("Forking Employee 3")
-      threading_employee1 = double("Threading Employee 1")
-      threading_employee2 = double("Threading Employee 2")
+    after(:each) do
+      Employer::Workshop.setup(config_code)
+    end
 
-      Employer::Boss.should_receive(:new).and_return(boss)
-      Employer::Pipeline.should_receive(:new).and_return(pipeline)
-      boss.should_receive(:pipeline=).with(pipeline)
-      boss.should_receive(:pipeline).and_return(pipeline)
-      pipeline.should_receive(:backend=).with(pipeline_backend)
-      Employer::Employees::ForkingEmployee.should_receive(:new).and_return(forking_employee1, forking_employee2, forking_employee3)
-      Employer::Employees::ThreadingEmployee.should_receive(:new).and_return(threading_employee1, threading_employee2)
-      boss.should_receive(:allocate_employee).with(forking_employee1)
-      boss.should_receive(:allocate_employee).with(forking_employee2)
-      boss.should_receive(:allocate_employee).with(forking_employee3)
-      boss.should_receive(:allocate_employee).with(threading_employee1)
-      boss.should_receive(:allocate_employee).with(threading_employee2)
+    it "returns a workshop" do
+      Employer::Workshop.setup(config_code).should be_instance_of(Employer::Workshop)
+    end
 
-      config_code = <<CONFIG
-      pipeline_backend TestPipelineBackend.new
-      forking_employees 3
-      threading_employees 2
-CONFIG
+    it "allocates a boss" do
+      Employer::Boss.should_receive(:new).and_call_original
+    end
 
-      workshop = Employer::Workshop.setup(config_code)
-      workshop.should be_instance_of(Employer::Workshop)
+    it "sets up pipeline" do
+      Employer::Pipeline.should_receive(:new).and_call_original
+      Employer::Boss.any_instance.should_receive(:pipeline=).with(instance_of(Employer::Pipeline)).and_call_original
+    end
+
+    it "sets the defined pipeline backend" do
+      Employer::Pipeline.any_instance.should_receive(:backend=).with(instance_of(TestPipelineBackend)).and_call_original
+    end
+
+    context "with only forking employees" do
+      let(:config_code) { "forking_employees 3" }
+
+      it "allocates forking employees" do
+        Employer::Employees::ForkingEmployee.should_receive(:new).exactly(3).times.and_call_original
+        Employer::Boss.any_instance.should_receive(:allocate_employee).with(instance_of(Employer::Employees::ForkingEmployee)).exactly(3).times
+      end
+
+      it "does not instantiate threading employees" do
+        Employer::Employees::ThreadingEmployee.should_receive(:new).never
+      end
+    end
+
+    context "with only threading employees" do
+      let(:config_code) { "threading_employees 2" }
+
+      it "allocates threading employees" do
+        config_code = "threading_employees 2"
+        Employer::Employees::ThreadingEmployee.should_receive(:new).exactly(2).times.and_call_original
+        Employer::Boss.any_instance.should_receive(:allocate_employee).with(instance_of(Employer::Employees::ThreadingEmployee)).exactly(2).times
+      end
+
+      it "does not instantiate forking employees" do
+        Employer::Employees::ForkingEmployee.should_receive(:new).never
+      end
     end
   end
 
   describe ".pipeline" do
-    it "sets up a pipeline to feed the workshop" do
-      boss = double("Boss").as_null_object
-      Employer::Boss.should_receive(:new).and_return(boss)
-      pipeline = double("Pipeline").as_null_object
-      boss.stub(:pipeline).and_return(pipeline)
-      Employer::Pipeline.should_receive(:new).and_return(pipeline)
-      pipeline_backend = double("Pipeline backend")
-      TestPipelineBackend.should_receive(:new).and_return(pipeline_backend)
+    it "returns a pipeline to feed the workshop" do
+      Employer::Pipeline.should_receive(:new).and_call_original
+      Employer::Pipeline.any_instance.should_receive(:backend=).with(instance_of(TestPipelineBackend)).and_call_original
       File.should_receive(:read).with("config/employee.rb").and_return(config_code)
-
       workshop_pipeline = Employer::Workshop.pipeline("config/employee.rb")
-      workshop_pipeline.should eq(pipeline)
+      workshop_pipeline.should be_instance_of(Employer::Pipeline)
     end
   end
 
-  describe "#run" do
-    it "should call manage on the boss" do
-      boss.should_receive(:manage)
-      workshop.run
-    end
-  end
+  context "with initialized workshop" do
+    let(:workshop) { Employer::Workshop.setup(config_code) }
+    let(:boss) { Employer::Boss.any_instance }
 
-  describe "#stop" do
-    it "should call stop_managing on the boss" do
-      boss.should_receive(:stop_managing)
-      workshop.stop
+    describe "#run" do
+      it "should call manage on the boss" do
+        boss.should_receive(:manage)
+        workshop.run
+      end
     end
-  end
 
-  describe "#stop_now" do
-    it "should call stop_managing and stop_employees on the boss" do
-      boss.should_receive(:stop_managing)
-      boss.should_receive(:stop_employees)
-      workshop.stop_now
+    describe "#stop" do
+      it "should call stop_managing on the boss" do
+        boss.should_receive(:stop_managing)
+        workshop.stop
+      end
     end
-  end
 
-  describe "#pipeline" do
-    it "returns the pipeline" do
-      pipeline = double("Pipeline").as_null_object
-      boss.stub(:pipeline).and_return(pipeline)
-      workshop.pipeline.should eq(pipeline)
+    describe "#stop_now" do
+      it "should call stop_managing and stop_employees on the boss" do
+        boss.should_receive(:stop_managing)
+        boss.should_receive(:stop_employees)
+        workshop.stop_now
+      end
+    end
+
+    describe "#pipeline" do
+      it "returns the pipeline" do
+        workshop.pipeline.should be_instance_of(Employer::Pipeline)
+      end
     end
   end
 end
