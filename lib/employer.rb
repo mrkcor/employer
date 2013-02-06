@@ -1,5 +1,6 @@
 require "employer/version"
 require "employer/errors"
+require "employer/logger"
 require "employer/pipeline"
 require "employer/job"
 require "employer/employees"
