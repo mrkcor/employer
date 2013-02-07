@@ -2,16 +2,17 @@ require_relative "errors"
 
 module Employer
   class Boss
-    attr_reader :pipeline, :employees, :keep_going, :sleep_time
+    attr_reader :pipeline, :logger, :employees, :keep_going, :sleep_time
 
-    def initialize
-      @pipeline = nil
+    def initialize(logger)
+      @logger = logger
+      @pipeline = Employer::Pipeline.new(logger)
       @employees = []
       @sleep_time_index = 0
     end
 
-    def pipeline=(pipeline)
-      @pipeline = pipeline
+    def pipeline_backend=(backend)
+      pipeline.backend = backend
     end
 
     def allocate_employee(employee)

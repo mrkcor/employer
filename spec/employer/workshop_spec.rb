@@ -7,26 +7,27 @@ describe Employer::Workshop do
 
   let(:config_code) { "pipeline_backend TestPipelineBackend.new" }
 
-  describe ".setup" do
+  describe "#initialize" do
+    let(:workshop) { Employer::Workshop.new(config_code) }
+
     after(:each) do
-      Employer::Workshop.setup(config_code)
+      workshop
     end
 
-    it "returns a workshop" do
-      Employer::Workshop.setup(config_code).should be_instance_of(Employer::Workshop)
+    it "sets up a logger" do
+      workshop.logger.should be_instance_of(Employer::Logger)
     end
 
-    it "allocates a boss" do
-      Employer::Boss.should_receive(:new).and_call_original
-    end
-
-    it "sets up pipeline" do
-      Employer::Pipeline.should_receive(:new).and_call_original
-      Employer::Boss.any_instance.should_receive(:pipeline=).with(instance_of(Employer::Pipeline)).and_call_original
+    it "sets up a boss" do
+      logger = double("Logger")
+      Employer::Logger.should_receive(:new).and_return(logger)
+      Employer::Boss.should_receive(:new).with(logger).and_call_original
     end
 
     it "sets the defined pipeline backend" do
-      Employer::Pipeline.any_instance.should_receive(:backend=).with(instance_of(TestPipelineBackend)).and_call_original
+      boss = double("Boss")
+      Employer::Boss.should_receive(:new).and_return(boss)
+      boss.should_receive(:pipeline_backend=).with(instance_of(TestPipelineBackend))
     end
 
     context "with loggers" do
@@ -49,7 +50,7 @@ describe Employer::Workshop do
       let(:config_code) { "forking_employees 3" }
 
       it "allocates forking employees" do
-        Employer::Employees::ForkingEmployee.should_receive(:new).exactly(3).times.and_call_original
+        Employer::Employees::ForkingEmployee.should_receive(:new).with(instance_of(Employer::Logger)).exactly(3).times.and_call_original
         Employer::Boss.any_instance.should_receive(:allocate_employee).with(instance_of(Employer::Employees::ForkingEmployee)).exactly(3).times
       end
 
@@ -62,8 +63,7 @@ describe Employer::Workshop do
       let(:config_code) { "threading_employees 2" }
 
       it "allocates threading employees" do
-        config_code = "threading_employees 2"
-        Employer::Employees::ThreadingEmployee.should_receive(:new).exactly(2).times.and_call_original
+        Employer::Employees::ThreadingEmployee.should_receive(:new).with(instance_of(Employer::Logger)).exactly(2).times.and_call_original
         Employer::Boss.any_instance.should_receive(:allocate_employee).with(instance_of(Employer::Employees::ThreadingEmployee)).exactly(2).times
       end
 
@@ -84,8 +84,14 @@ describe Employer::Workshop do
   end
 
   context "with initialized workshop" do
-    let(:workshop) { Employer::Workshop.setup(config_code) }
+    let(:workshop) { Employer::Workshop.new(config_code) }
     let(:boss) { Employer::Boss.any_instance }
+
+    describe "#logger" do
+      it "returns the logger" do
+        workshop.logger.should be_instance_of(Employer::Logger)
+      end
+    end
 
     describe "#run" do
       it "should call manage on the boss" do

@@ -2,6 +2,12 @@ require_relative "errors"
 
 module Employer
   class Pipeline
+    attr_reader :logger
+
+    def initialize(logger)
+      @logger = logger
+    end
+
     def backend=(backend)
       @backend = backend
     end

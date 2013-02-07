@@ -1,5 +1,6 @@
 shared_examples "an employee" do
-  let(:employee) { described_class.new }
+  let(:logger) { double("Logger").as_null_object }
+  let(:employee) { described_class.new(logger) }
   let(:completing_job_class) do
     Class.new do
       def perform
@@ -18,6 +19,13 @@ shared_examples "an employee" do
   end
   let(:failing_job) { failing_job_class.new}
   let(:job) { double("Job") }
+
+  describe "#initialize" do
+    it "sets the logger" do
+      employee = described_class.new(logger)
+      employee.logger.should eq(logger)
+    end
+  end
 
   describe "#work" do
     it "rejects a job while its already working on one" do

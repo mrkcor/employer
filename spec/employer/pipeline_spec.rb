@@ -1,9 +1,19 @@
 require "employer/pipeline"
 
 describe Employer::Pipeline do
-  let(:pipeline) { Employer::Pipeline.new }
+  let(:logger) { double("Logger").as_null_object }
+  let(:pipeline) { Employer::Pipeline.new(logger) }
   let(:backend) { double("Pipeline backend") }
   let(:job) { double("Job") }
+
+  describe "#initialize" do
+    let(:logger) { double("Logger") }
+
+    it "sets the logger" do
+      pipeline = Employer::Pipeline.new(logger)
+      pipeline.logger.should eq(logger)
+    end
+  end
 
   it "has a pluggable backend" do
     pipeline.backend = backend

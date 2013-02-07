@@ -14,7 +14,7 @@ module Employer
       end
 
       int_count = 0
-      workshop = Employer::Workshop.setup(File.read(options[:config]))
+      workshop = Employer::Workshop.new(File.read(options[:config]))
 
       Signal.trap("INT") do
         int_count += 1

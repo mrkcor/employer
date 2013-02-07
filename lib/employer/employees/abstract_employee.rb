@@ -3,7 +3,11 @@ require_relative "../errors"
 module Employer
   module Employees
     class AbstractEmployee
-      attr_reader :job
+      attr_reader :job, :logger
+
+      def initialize(logger)
+        @logger = logger
+      end
 
       def work(job)
         raise Employer::Errors::EmployeeBusy unless free?

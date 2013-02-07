@@ -1,23 +1,49 @@
 require "employer/boss"
 
 describe Employer::Boss do
+  before(:each) do
+    stub_const("Employer::Pipeline", Class.new)
+    Employer::Pipeline.stub(:new).and_return(pipeline)
+  end
+
   let(:pipeline) { double("Pipeline") }
   let(:employee) { double("Employee") }
   let(:free_employee) { double("Free employee", free?: true) }
   let(:busy_employee) { double("Busy employee", free?: false) }
-  let(:boss) { Employer::Boss.new }
+  let(:logger) { double("Logger").as_null_object }
+  let(:boss) { Employer::Boss.new(logger) }
 
-  it "can be given a pipeline" do
-    boss.pipeline = pipeline
-    boss.pipeline.should eq(pipeline)
+  describe "#initialize" do
+    let(:logger) { double("Logger") }
+
+    it "sets the logger" do
+      boss = Employer::Boss.new(logger)
+      boss.logger.should eq(logger)
+    end
+
+    it "sets a pipeline with the logger" do
+      Employer::Pipeline.should_receive(:new).with(logger).and_return(pipeline)
+      boss = Employer::Boss.new(logger)
+      boss.pipeline.should eq(pipeline)
+    end
   end
 
-  it "can be given employees" do
-    john = double
-    jane = double
-    boss.allocate_employee(john)
-    boss.allocate_employee(jane)
-    boss.employees.should eq([john, jane])
+  describe "#pipeline_backend=" do
+    it "sets the pipeline backend" do
+      backend = double("Backend")
+      boss.pipeline.should_receive(:backend=).with(backend)
+      boss.pipeline_backend = backend
+    end
+  end
+
+  describe "#allocate_employee" do
+    it "can be given employees" do
+      john = double
+      jane = double
+      boss.allocate_employee(john)
+      boss.allocate_employee(jane)
+      boss.employees.should eq([john, jane])
+    end
   end
 
   describe "#manage" do
@@ -47,7 +73,6 @@ describe Employer::Boss do
 
     before(:each) do
       boss.stub(:get_work).and_return(job1, job2, nil, nil)
-      boss.pipeline = pipeline
     end
 
     it "puts free employees to work while work is available" do
@@ -85,7 +110,6 @@ describe Employer::Boss do
   describe "#get_work" do
     before(:each) do
       pipeline.stub(:dequeue).and_return(nil)
-      boss.pipeline = pipeline
     end
 
     it "increases sleep time each time it gets no job" do
@@ -116,10 +140,6 @@ describe Employer::Boss do
   end
 
   describe "#update_job_status" do
-    before(:each) do
-      boss.pipeline = pipeline
-    end
-
     let(:job) { double("Job") }
     let(:employee) { employee = double("Employee", job: job) }
 
