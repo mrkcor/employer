@@ -29,6 +29,22 @@ describe Employer::Workshop do
       Employer::Pipeline.any_instance.should_receive(:backend=).with(instance_of(TestPipelineBackend)).and_call_original
     end
 
+    context "with loggers" do
+      before(:each) do
+        stub_const("MyFirstLogger", Class.new)
+        stub_const("MySecondLogger", Class.new)
+      end
+
+      let(:config_code) { "log_to MyFirstLogger.new\nlog_to MySecondLogger.new" }
+
+      it "tells the logger to append to the given logger" do
+        workshop_logger = double("Logger")
+        Employer::Logger.should_receive(:new).and_return(workshop_logger)
+        workshop_logger.should_receive(:append_to).with(instance_of(MyFirstLogger))
+        workshop_logger.should_receive(:append_to).with(instance_of(MySecondLogger))
+      end
+    end
+
     context "with only forking employees" do
       let(:config_code) { "forking_employees 3" }
 

@@ -62,5 +62,9 @@ module Employer
         end
       end
     end
+
+    def log_to(log_to_logger)
+      logger.append_to(log_to_logger)
+    end
   end
 end
