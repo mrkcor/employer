@@ -65,8 +65,8 @@ describe Employer::Boss do
   end
 
   describe "#delegate_work" do
-    let(:job1) { double("Job 1") }
-    let(:job2) { double("Job 2") }
+    let(:job1) { double("Job 1", id: 1) }
+    let(:job2) { double("Job 2", id: 2) }
     let(:employee1) { double("Employee 1") }
     let(:employee2) { double("Employee 2") }
     let(:employee3) { double("Employee 3") }
@@ -126,7 +126,7 @@ describe Employer::Boss do
     end
 
     it "increases resets sleep time when it gets a job" do
-      job = double("Job")
+      job = double("Job", id: 1)
       pipeline.stub(:dequeue).and_return(nil, nil, job, job)
       boss.should_receive(:sleep).with(0.5).ordered
       boss.get_work.should be_nil
@@ -140,7 +140,7 @@ describe Employer::Boss do
   end
 
   describe "#update_job_status" do
-    let(:job) { double("Job") }
+    let(:job) { double("Job", id: 1) }
     let(:employee) { employee = double("Employee", job: job) }
 
     it "completes the job and frees the employee if employee reports job completed" do
@@ -218,7 +218,7 @@ describe Employer::Boss do
   end
 
   describe "#delegate_job" do
-    let(:job) { double("Job") }
+    let(:job) { double("Job", id: 1) }
 
     it "will put a free employee to work on a job" do
       employee.should_receive(:free?).and_return(true)

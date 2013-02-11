@@ -3,6 +3,10 @@ shared_examples "an employee" do
   let(:employee) { described_class.new(logger) }
   let(:completing_job_class) do
     Class.new do
+      def id
+        1
+      end
+
       def perform
         sleep 0.2
       end
@@ -11,6 +15,10 @@ shared_examples "an employee" do
   let(:completing_job) { completing_job_class.new}
   let(:failing_job_class) do
     Class.new do
+      def id
+        2
+      end
+
       def perform
         sleep 0.2
         raise "Oops"
@@ -18,7 +26,7 @@ shared_examples "an employee" do
     end
   end
   let(:failing_job) { failing_job_class.new}
-  let(:job) { double("Job") }
+  let(:job) { double("Job", id: 3) }
 
   describe "#initialize" do
     it "sets the logger" do

@@ -4,7 +4,7 @@ describe Employer::Pipeline do
   let(:logger) { double("Logger").as_null_object }
   let(:pipeline) { Employer::Pipeline.new(logger) }
   let(:backend) { double("Pipeline backend") }
-  let(:job) { double("Job") }
+  let(:job) { double("Job", id: 1) }
 
   describe "#initialize" do
     let(:logger) { double("Logger") }
