@@ -67,6 +67,9 @@ require "employer-mongoid"
 # backend.
 pipeline_backend Employer::Mongoid::Pipeline.new
 
+# Add loggers to log. Logged output will go to all of the loggers defined here.
+log_to ::Logger.new("./log/employer.log")
+
 # Use employees that fork subprocesses to perform jobs. You cannot use these
 # with JRuby, because JRuby doesn't support Process#fork.
 forking_employees 4
