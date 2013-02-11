@@ -93,6 +93,7 @@ module Employer
 
     def delegate_job(job)
       raise Employer::Errors::NoEmployeeFree unless employee = free_employee
+      logger.info("Delegating job #{job.id} to employee #{employee.object_id}")
       employee.work(job)
     end
 

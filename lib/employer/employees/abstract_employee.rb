@@ -15,7 +15,9 @@ module Employer
       end
 
       def perform_job
+        logger.debug("Employee #{self.object_id} is now performing job #{job.id}")
         job.perform
+        logger.debug("Employee #{self.object_id} has now completed #{job.id}")
       end
 
       def wait_for_completion

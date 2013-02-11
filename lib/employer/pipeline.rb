@@ -32,21 +32,25 @@ module Employer
 
     def clear
       raise Employer::Errors::PipelineBackendRequired if backend.nil?
+      logger.info("Clearing pipeline of all jobs!")
       backend.clear
     end
 
     def complete(job)
       raise Employer::Errors::PipelineBackendRequired if backend.nil?
+      logger.info("Marking job #{job.id} as complete")
       backend.complete(job)
     end
 
     def reset(job)
       raise Employer::Errors::PipelineBackendRequired if backend.nil?
+      logger.info("Resetting job #{job.id}")
       backend.reset(job)
     end
 
     def fail(job)
       raise Employer::Errors::PipelineBackendRequired if backend.nil?
+      logger.info("Marking job #{job.id} as failed")
       backend.fail(job)
     end
 
