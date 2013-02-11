@@ -44,6 +44,10 @@ module Employer
       @boss.pipeline
     end
 
+    def log_to(log_to_logger)
+      logger.append_to(log_to_logger)
+    end
+
     private
 
     def forking_employees(number)
@@ -56,10 +60,6 @@ module Employer
 
     def pipeline_backend(backend)
       @boss.pipeline_backend = backend
-    end
-
-    def log_to(log_to_logger)
-      logger.append_to(log_to_logger)
     end
   end
 end

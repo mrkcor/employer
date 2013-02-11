@@ -1,5 +1,6 @@
 require "thor"
 require "fileutils"
+require "logger"
 
 module Employer
   class CLI < Thor
@@ -15,6 +16,7 @@ module Employer
 
       int_count = 0
       workshop = Employer::Workshop.new(File.read(options[:config]))
+      workshop.log_to(::Logger.new(STDOUT))
 
       Signal.trap("INT") do
         int_count += 1

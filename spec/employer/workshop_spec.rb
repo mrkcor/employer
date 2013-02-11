@@ -120,5 +120,13 @@ describe Employer::Workshop do
         workshop.pipeline.should be_instance_of(Employer::Pipeline)
       end
     end
+
+    describe "#log_to" do
+      it "adds a logger to the workshop logger" do
+        logger = double("Logger")
+        workshop.logger.should_receive(:append_to).with(logger)
+        workshop.log_to(logger)
+      end
+    end
   end
 end
