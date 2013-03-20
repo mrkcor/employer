@@ -68,8 +68,10 @@ won't be attempted again.
 Employer manages its jobs through its pipeline, in order to feed jobs into the
 pipeline and to get jobs out of the pipeline you need to connect a backend to
 it. You can either use a backend that someone has built already (if you're using
-Mongoid 3 you can use the employer-mongoid gem), or implement your own. A valid
-pipeline backend must implement the methods shown in the below code snippet:
+ActiveRecord 3.2.x you can use the employer-activerecord gem, and if you're
+using Mongoid 3 you can use the employer-mongoid gem), or implement your own. A 
+valid pipeline backend must implement the methods shown in the below code 
+snippet:
 
 ```ruby
 class CustomPipelineBackend
@@ -119,12 +121,12 @@ generate config/employer.rb, the file will look something like this:
 # your database, etc.)
 # require "./config/environment"
 
-require "employer-mongoid"
+require "employer-activerecord"
 
 # Setup the backend for the pipeline, this is where the boss gets the jobs to
 # process. See the documentation for details on writing your own pipeline
 # backend.
-pipeline_backend Employer::Mongoid::Pipeline.new
+pipeline_backend Employer::ActiveRecord::Pipeline.new
 
 # Add loggers to log. Logged output will go to all of the loggers defined here.
 log_to ::Logger.new("./log/employer.log")
