@@ -5,6 +5,14 @@ module Employer
     class AbstractEmployee
       attr_reader :job, :logger
 
+      def self.before_fork_hooks
+        @before_fork_hooks ||= []
+      end
+
+      def self.before_fork(&block)
+        before_fork_hooks << block
+      end
+
       def initialize(logger)
         @logger = logger
       end
@@ -12,6 +20,7 @@ module Employer
       def work(job)
         raise Employer::Errors::EmployeeBusy unless free?
         @job = job
+        self.class.before_fork_hooks.each(&:call)
       end
 
       def perform_job

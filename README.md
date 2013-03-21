@@ -108,6 +108,18 @@ class CustomPipelineBackend
 end
 ```
 
+In the event that your backend needs to do something special before forking or
+starting a new thread to perform a job you can add in hooks on the appropriate 
+Employee class:
+
+```ruby
+Employer::Employees::ForkingEmployee.before_fork { # your code here }
+
+Employer::Employees::ThreadingEmployee.before_fork { # your code here }
+```
+
+You can add multiple hooks, they are executed in the order they were added.
+
 To hook up the backend to Employer you must generate and edit a config file by
 running `employer config` (or more likely `bundle exec employer config`). If you
 don't specify a custom path (with -c /path/to/employer\_config.rb) this will

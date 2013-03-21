@@ -40,6 +40,18 @@ shared_examples "an employee" do
       employee.should_receive(:free?).and_return(false)
       expect { employee.work(job) }.to raise_error(Employer::Errors::EmployeeBusy)
     end
+
+    it "executes before fork hooks" do
+      hook1 = lambda { "hook 1" }
+      hook1.should_receive(:call)
+
+      hook2 = lambda { "hook 2" }
+      hook2.should_receive(:call)
+
+      described_class.before_fork(&hook1)
+      described_class.before_fork(&hook2)
+      employee.work(job)
+    end
   end
 
   describe "#work_in_progress?" do
